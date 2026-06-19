@@ -1,0 +1,22 @@
+services:
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: agent_user
+      POSTGRES_PASSWORD: agent_pass
+      POSTGRES_DB: diagnosis_db
+    ports:
+      - "127.0.0.1:5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./init_database.sql:/docker-entrypoint-initdb.d/init_database.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U agent_user -d diagnosis_db"]
+      interval: 3s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+volumes:
+  pgdata:
+
